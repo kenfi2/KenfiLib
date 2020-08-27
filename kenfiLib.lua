@@ -13,6 +13,19 @@ Game = {
 		end
 		return spectatorVec
 	end,
+	getPlayers = function()
+		players = {}
+		for _, v in ipairs(getPlayersOnline()) do
+			local player = Player(v)
+			table.insert(players, player)
+		end
+		return players
+	end,
+	sendTextMessage = function(type, message)
+		for _, players in ipairs(Game.getPlayers()) do
+			players:sendTextMessage(type, message)	
+		end
+	end,
 }
 nextEvent = {}
 function Game.getEvents()
