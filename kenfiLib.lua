@@ -1,3 +1,69 @@
+Game = {
+	getSpectators = function(position, multifloor, onlyPlayer, minRangeX, maxRangeX, minRangeY, maxRangeY)
+		spectatorList = getSpectators(position, minRangeX, minRangeY, multifloor)
+		spectatorVec = {}
+		for _, creature in ipairs(spectatorList)do
+			creature = Creature(creature)
+			player = Player(creature)
+			if onlyPlayer then
+				table.insert(spectatorVec, player)
+			else
+				table.insert(spectatorVec, creature)
+			end
+		end
+		return spectatorVec
+	end,
+}
+nextEvent = {}
+function Game.getEvents()
+	if #nextEvent > 0 then
+		return
+	end
+	local file = io.open('data/globalevents/globalevents.xml')
+	if not file then
+		return
+	end
+	local XML = file:read('a*')
+	for i, v in ipairs(XML:splitTrimmed(">")) do
+		local hasName = v:find("name")
+		local hasTime = v:find("time")
+		if hasName and hasTime then
+			local name = v:match('name=".-"'):splitTrimmed('"')[2]
+			local time = v:match('time=".-"'):splitTrimmed('"')[2]
+			local hour = (time:splitTrimmed(":")[1])
+			table.insert(nextEvent, {name = name, time = (tonumber(hour) == 24 and 0 or tonumber(hour)), realTime = time})
+		end
+	end
+	table.sort(nextEvent, function(a,b)
+		return b.time > a.time
+	end)
+	io.close(file)
+	return nextEvent
+end
+function Game.getNextEvent()
+	local hour = tonumber(os.date("%H"))
+	local i = 0
+	local stop = false
+	repeat
+		i = i + 1
+		nextEvent.times = nextEvent.times + 1
+		if nextEvent[i] and tonumber(nextEvent[i].time) == hour then
+			name = nextEvent[i].name
+			time = nextEvent[i].realTime
+			break
+		elseif i > #nextEvent then
+			hour = hour + 1
+			hour = (hour == 24 and 0 or hour)
+			i = 0
+		end
+	until nextEvent:stop()
+	nextEvent.times = 0
+	return name, time
+end
+function nextEvent:sendTextMessage(type, message)
+	return Game.sendTextMessage(type, (message):format(Game.getNextEvent()))
+end
+
 CombatLib = {
 	setParameter = function(self, key, value)
 		setCombatParam(self.combat, key, value)
@@ -37,11 +103,11 @@ ContainerLib = {
 }
 
 TileLib = {
-	getPosition = function(self, bool)
-		return bool and self.pos or Position(self.pos)
+	getPosition = function(self)
+		return Position(self)
 	end,
 	getTopCreature = function(self)
-		return Creature(getTopCreature(self.pos).uid)
+		return Creature(getTopCreature(self).uid)
 	end,
 }
 
@@ -52,7 +118,7 @@ TownLib = {
 }
 
 ItemLib = {
-	getPosition = function(self, tb) return tb and getThingPos(self.id) or Position(getThingPos(self.id)) end,
+	getPosition = function(self) return Position(getThingPos(self.id)) end,
 	getCount = function(self) return getThing(self.id).type == 0 and 1 or getThing(self.id).type end,
 	getId = function(self) return self.id end,
 	getAttribute = function(self, key)
@@ -146,7 +212,7 @@ CreatureLib = {
 		doPlayerSetSpecialDescription(self.id, value)
 	end,
 	getId = function(self) return self.id end,
-	getPosition = function(self, tb) return tb and getThingPos(self.id) or Position(getThingPos(self.id)) end,
+	getPosition = function(self) return Position(getThingPos(self.id)) end,
 	teleportTo = function(self, toPos, ...)
 		doTeleportThing(self.id, toPos, ...)
 	end,
@@ -157,10 +223,10 @@ CreatureLib = {
 
 PositionLib = {
 	sendMagicEffect = function(self, effect)
-		doSendMagicEffect(self.pos, effect)
+		doSendMagicEffect(self, effect)
 	end,
 	sendDistanceEffect = function(self, positionEx, distanceEffect)
-		doSendDistanceShoot(self.pos, positionEx, distanceEffect)
+		doSendDistanceShoot(self, positionEx, distanceEffect)
 	end,
 }
 
@@ -168,12 +234,10 @@ function Position(x, y, z, stackpos)
 	if type(x) == "table" then
 		pos = x
 		if pos.x and pos.y and pos.z then
-			return setmetatable({pos = pos}, {__index = PositionLib})
+			return setmetatable(pos, {__index = PositionLib})
 		end
 	else
-		stackpos = stackpos or 0
-		pos = {x = x,y = y,z = z,stackpos = stackpos}
-		return setmetatable({pos = pos}, {__index = PositionLib})
+		return setmetatable({x=x,y=y,z=z,stackpos=stackpos or 0}, {__index = PositionLib})
 	end
 end
 
@@ -207,9 +271,9 @@ function Monster(uid)
 end
 
 function Player(uid)
-	if tonumber(uid) then
+	if tonumber(uid) and isPlayer(uid) then
 		return setmetatable({id = uid}, {__index = setmetatable(PlayerLib, {__index = Creature(uid)})})
-	elseif getmetatable(uid) then
+	elseif getmetatable(uid) and Creature(uid):isPlayer() then
 		uid = Creature(uid)
 		return setmetatable({id = uid:getId()}, {__index = setmetatable(PlayerLib, {__index = Creature(uid)})})
 	elseif getPlayerByName(uid) then
@@ -229,12 +293,11 @@ function Tile(x,y,z,stackpos)
 	if type(x) == "table" then
 		pos = x
 		if pos.x and pos.y and pos.z then
-			return setmetatable({pos = pos}, {__index = TileLib})
+			return setmetatable(pos, {__index = TileLib})
 		end
 	else
-		stackpos = stackpos or 0
-		pos = {x = x,y = y,z = z,stackpos = stackpos}
-		return setmetatable({pos = pos}, {__index = TileLib})
+		pos = {x = x,y = y,z = z,stackpos = stackpos or 0}
+		return setmetatable(pos, {__index = TileLib})
 	end
 end
 
