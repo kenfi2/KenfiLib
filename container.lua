@@ -9,8 +9,8 @@ ContainerLib = {
 
 function Container(uid)
 	if tonumber(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = Item(uid)})})
+		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = ItemLib}), __eq = eq_event(a,b)})
 	elseif getmetatable(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = Item(uid)})})
+		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = ItemLib}), __eq = eq_event(a,b)})
 	end
 end
