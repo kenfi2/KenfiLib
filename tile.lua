@@ -11,10 +11,10 @@ function Tile(x,y,z,stackpos)
 	if type(x) == "table" then
 		pos = x
 		if pos.x and pos.y and pos.z then
-			return setmetatable(pos, {__index = TileLib})
+			return setmetatable(pos, {__index = TileLib, __eq = eq_event(a, b)})
 		end
 	else
 		pos = {x = x,y = y,z = z,stackpos = stackpos or 0}
-		return setmetatable(pos, {__index = TileLib})
+		return setmetatable(pos, {__index = TileLib, __eq = eq_event(a, b)})
 	end
 end
