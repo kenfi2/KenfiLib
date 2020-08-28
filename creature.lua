@@ -19,18 +19,29 @@ CreatureLib = {
 	end,
 	getId = function(self) return self.id end,
 	getPosition = function(self) return Position(getThingPos(self.id)) end,
+	getTile = function(self) return Tile(self:getPosition()) end,
 	teleportTo = function(self, toPos, ...)
 		doTeleportThing(self.id, toPos, ...)
 	end,
 	remove = function(self, count)
 		doRemoveCreature(self.id)
 	end,
+	getSkull = function(self, ...)
+		return getCreatureSkullType(self.id, ...)
+	end,
+	registerEvent = function(self, name)
+		registerCreatureEvent(self.id, name)
+	end,
+	unregisterEvent = function(self, name)
+		function_name = type(name) == "string" and unregisterCreatureEvent or unregisterCreatureEventType
+		function_name(self.id, name)
+	end,
 }
 
 function Creature(uid)
 	if tonumber(uid) then
-		return setmetatable({id = uid}, {__index = CreatureLib})
+		return setmetatable({id = uid}, {__index = CreatureLib, __eq = eq_event(a, b)})
 	elseif getCreatureByName(uid) then
-		return setmetatable({id = getCreatureByName(uid)}, {__index = CreatureLib})
+		return setmetatable({id = getCreatureByName(uid)}, {__index = CreatureLib, __eq = eq_event(a, b)})
 	end
 end
