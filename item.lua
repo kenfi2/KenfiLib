@@ -32,8 +32,8 @@ ItemLib = {
 
 function Item(uid)
 	if tonumber(uid) then
-		return setmetatable({id = uid}, {__index = ItemLib})
+		return setmetatable({id = uid}, {__index = ItemLib, __eq = eq_event(a, b)})
 	elseif getmetatable(uid) then
-		return setmetatable({id = uid:getId()}, {__index = ItemLib})
+		return setmetatable({id = uid:getId()}, {__index = ItemLib, __eq = eq_event(a, b)})
 	end
 end
