@@ -23,6 +23,7 @@ function Position(x, y, z, stackpos)
 				end
 				return false
 			end,
+			__eq = eq_event(a, b),
 			__sub = function(pos, value)
 				if type(value) == "table" or getmetatable(value) then
 					if value.x and value.y and value.z then
@@ -48,6 +49,7 @@ function Position(x, y, z, stackpos)
 			end
 			return false
 		end,
+		__eq = eq_event(a, b),
 		__sub = function(pos, value)
 			if type(value) == "table" or getmetatable(value) then
 				if value.x and value.y and value.z then
