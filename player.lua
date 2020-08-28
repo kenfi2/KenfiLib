@@ -37,11 +37,10 @@ PlayerLib = {
 
 function Player(uid)
 	if tonumber(uid) and isPlayer(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(PlayerLib, {__index = Creature(uid)})})
-	elseif getmetatable(uid) and Creature(uid):isPlayer() then
-		uid = Creature(uid)
-		return setmetatable({id = uid:getId()}, {__index = setmetatable(PlayerLib, {__index = uid})})
+		return setmetatable({id = uid}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event()})
+	elseif getmetatable(uid) then
+		return setmetatable({id = uid:getId()}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event()})
 	elseif getPlayerByName(uid) then
-		return setmetatable({id = getPlayerByName(uid)}, {__index = setmetatable(PlayerLib, {__index = Creature(getPlayerByName(uid))})})
+		return setmetatable({id = getPlayerByName(uid)}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event()})
 	end
 end
