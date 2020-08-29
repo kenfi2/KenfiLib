@@ -1,7 +1,9 @@
-PlayerLib = {
+Player = setmetatable(
+{
 	getTown = function(self)
 		return getPlayerTown(self.id)
 	end,
+	isPlayer = function(self) return true end,
 	getDescription = function(self)
 		return ("%s. %s"):format(getPlayerNameDescription(self.id), getPlayerSpecialDescription(self.id))
 	end,
@@ -78,14 +80,24 @@ PlayerLib = {
 	getBaseMaxMana = function(self)
 		return getCreatureMaxMana(self.id, true)
 	end,
+},
+{
+	__index = Creature,
+	__call = function(this, var)
+		local id = 0
+		if tonumber(var) then
+			id = tonumber(var)
+		elseif getPlayerByName(var) then
+			id = getPlayerByName(var)
+		elseif type(var) == "table" then
+			if var:isPlayer() then
+				id = var:getId()
+			end
+		end
+		if isPlayer(id) then
+			return setmetatable({id = id}, {__index = this})
+		end
+		return error("attempt to create metatable 'Player' (not player value)")
+	end,
 }
-
-function Player(uid)
-	if tonumber(uid) and isPlayer(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
-	elseif getmetatable(uid) then
-		return setmetatable({id = uid:getId()}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
-	elseif getPlayerByName(uid) then
-		return setmetatable({id = getPlayerByName(uid)}, {__index = setmetatable(PlayerLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
-	end
-end
+)

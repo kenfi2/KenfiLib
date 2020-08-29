@@ -1,16 +1,26 @@
-ContainerLib = {
+Container = setmetatable(
+{
+	isContainer = function(self) return true end,
 	addItem = function(self, item, count)
-		doAddContainerItem(self.id, item, count or 1)
+		doAddContainerItem(self.uid, item, count or 1)
 	end,
 	addItemEx = function(self, uid)
-		return doAddContainerItemEx(self.id, uid)
+		return doAddContainerItemEx(self.uid, uid)
+	end,
+},
+{
+	__index = Item,
+	__call = function(this, uid)
+		local id = 0
+		if type(uid) == "table" then
+			id = uid:getId()
+			uid = uid:getUnique()
+		elseif getThing(uid) then
+			id = getThing(uid).itemid
+		end
+		if uid and id then
+			return setmetatable({id = id, uid = uid}, {__index = this})
+		end
 	end,
 }
-
-function Container(uid)
-	if tonumber(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = ItemLib}), __eq = eq_event(a,b)})
-	elseif getmetatable(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(ContainerLib, {__index = ItemLib}), __eq = eq_event(a,b)})
-	end
-end
+)

@@ -1,18 +1,27 @@
-MonsterLib = {
+Monster = setmetatable(
+{
+	isMonster = function(self) return true end,
 	getDescription = function(self)
 		return getMonsterInfo(self:getName()).description
 	end,
-}
-
-function Monster(uid)
-	if tonumber(uid) and isMonster(uid) then
-		return setmetatable({id = uid}, {__index = setmetatable(MonsterLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
-	elseif getmetatable(uid) and Creature(uid):isMonster() then
-		uid = Creature(uid)
-		return setmetatable({id = uid:getId()}, {__index = setmetatable(MonsterLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
-	elseif getCreatureByName(uid) then
-		if isMonster(getCreatureByName(uid)) then
-			return setmetatable({id = getCreatureByName(uid)}, {__index = setmetatable(MonsterLib, {__index = CreatureLib}), __eq = eq_event(a, b)})
+},
+{
+	__index = Creature,
+	__call = function(this, var)
+		local id = 0
+		if tonumber(var) then
+			id = tonumber(var)
+		elseif getCreatureByName(var) then
+			id = getCreatureByName(var)
+		elseif type(var) == "table" then
+			if var:isMonster() then
+				return Monster(var:getId())
+			end
 		end
-	end
-end
+		if isMonster(id) then
+			return setmetatable({id = id}, {__index = this})
+		end
+		return error("attempt to create metatable 'Monster' (not monster value)")
+	end,
+}
+)

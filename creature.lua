@@ -1,4 +1,5 @@
-CreatureLib = {
+Creature = setmetatable(
+{
 	getHealth = function(self) return getCreatureHealth(self.id) end,
 	getMaxHealth = function(self) return getCreatureMaxHealth(self.id) end,
 	isPlayer = function(self) return isPlayer(self.id) end,
@@ -36,12 +37,20 @@ CreatureLib = {
 		function_name = type(name) == "string" and unregisterCreatureEvent or unregisterCreatureEventType
 		function_name(self.id, name)
 	end,
+},
+{
+	__eq = eq_event(a,b),
+	__call = function(this, var)
+		local id = 0
+		if tonumber(var) then
+			id = tonumber(var)
+		elseif getCreatureByName(var) then
+			id = getCreatureByName(var)
+		end
+		if isCreature(id) then
+			return setmetatable({id = id}, {__index = this})
+		end
+		return error("attempt to create metatable 'Creature' (not creature value)")
+	end,
 }
-
-function Creature(uid)
-	if tonumber(uid) then
-		return setmetatable({id = uid}, {__index = CreatureLib, __eq = eq_event(a, b)})
-	elseif getCreatureByName(uid) then
-		return setmetatable({id = getCreatureByName(uid)}, {__index = CreatureLib, __eq = eq_event(a, b)})
-	end
-end
+)

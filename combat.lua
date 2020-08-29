@@ -1,4 +1,5 @@
-CombatLib = {
+Combat = setmetatable(
+{
 	setParameter = function(self, key, value)
 		setCombatParam(self.combat, key, value)
 	end,
@@ -21,8 +22,10 @@ CombatLib = {
 		end
 		doCombat(creature, self.combat, variant)
 	end,
+},
+{
+	__call = function(this, ...)
+		return setmetatable({combat = createCombatObject()}, {__index = this, __eq = eq_event(a, b)})
+	end,
 }
-
-function Combat(uid)
-	return setmetatable({combat = createCombatObject()},{__index = CombatLib})
-end
+)
