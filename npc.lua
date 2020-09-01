@@ -1,8 +1,8 @@
-Monster = setmetatable(
+Npc = setmetatable(
 {
-	isMonster = function(self) return true end,
-	getDescription = function(self)
-		return getMonsterInfo(self:getName()).description
+	isNpc = function(self) return true end,
+	setMasterPos = function(self)
+		--
 	end,
 },
 {
@@ -16,14 +16,14 @@ Monster = setmetatable(
 				id = getCreatureByName(var)
 			end
 		elseif isMetatable(var) then
-			if var:isMonster() then
-				return Monster(var:getId())
+			if var:isNpc() then
+				return Npc(var:getId())
 			end
 		end
-		if isMonster(id) then
+		if isNpc(id) then
 			return setmetatable({id = id}, {__index = this})
 		end
-		return error("attempt to create metatable 'Monster' (not monster value)")
+		return error("attempt to create metatable 'Npc' (not npc value)")
 	end,
 }
 )

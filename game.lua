@@ -1,4 +1,90 @@
 Game = {
+	getGameState = function() return getGameState() end,
+	setGameState = function(id) doSetGameState(id) end,
+	getWorldType = function()
+		return getWorldType()
+	end,
+	setWorldType = function(type)
+		setWorldType(type)
+	end,
+	getExperienceStage = function(level, ...)
+		return getExperienceStage(level, ...)
+	end,
+	getReturnMessage = function(self)
+
+	end,
+	createItem = function(itemid,type,pos)
+		return Item(doCreateItem(itemid, type, pos))
+	end,
+	createContainer = function()
+		--
+	end,
+	createMonster = function(name, pos, extend, force)
+		return Monster(doCreateMonster(name, pos, extend, force))
+	end,
+	createNpc = function(name, pos)
+		return Npc(doCreateNpc(name, pos))
+	end,
+	createTile = function()
+		-- don't work in this version. Use Tile()
+	end,
+	createMonsterType = function()
+		-- don't work in this version.
+	end,
+	startRaid = function(raid)
+		doExecuteRaid(raid)
+	end,
+	sendAnimatedText = function(message, position, color, ...)
+		doSendAnimatedText(position, message, color, ...)
+	end,
+	getClientVersion = function()
+		local versionMin = getConfigValue(versionMin)
+		local versionMax = getConfigValue(versionMax)
+		local versionMsg = getConfigValue(versionMsg)
+		local tb = {
+			min = versionMin,
+			max = versionMax,
+			string = versionMsg
+		}
+		return tb
+	end,
+	reload = function(reloadType, ...)
+		doReloadInfo(reloadType, ...)
+	end,
+	getMonsterCount = function()
+		return getWorldCreatures(1)
+	end,
+	getPlayerCount = function()
+		return getWorldCreatures(0)
+	end,
+	getNpcCount = function()
+		return getWorldCreatures(2)
+	end,
+	getTowns = function()
+		local towns = {}
+		for i, v in ipairs(getTownList()) do
+			local town = Town(v.id)
+			table.insert(towns, town)
+		end
+		return towns
+	end,
+	getHouses = function()
+		local houses = {}
+		for _, town in ipairs(Game.getTowns()) do
+			local townId = town:getId()
+			for i, v in ipairs(getTownHouses(townId)) do
+				local house = House(v)
+				table.insert(houses, house)
+			end
+		end
+		return houses
+	end,
+	getStorageValue = function(key)
+		return getStorage(key)
+	end,
+	setStorageValue = function(key, value)
+		doSetStorage(key, value)
+	end,
 	getSpectators = function(position, multifloor, onlyPlayer, minRangeX, maxRangeX, minRangeY, maxRangeY)
 		spectatorList = getSpectators(position, minRangeX, minRangeY, multifloor)
 		spectatorVec = {}
@@ -27,9 +113,7 @@ Game = {
 		end
 	end,
 	getEvents = function()
-		if #nextEvent > 0 then
-			return
-		end
+		local nextEvent = {}
 		local file = io.open('data/globalevents/globalevents.xml')
 		if not file then
 			return

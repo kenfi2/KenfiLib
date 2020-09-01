@@ -1,7 +1,25 @@
 Player = setmetatable(
 {
+	getGuild = function(self)
+		return Guild(getPlayerGuildId(self.id), getPlayerGuildName(self.id))
+	end,
+	setGuild = function(self, id)
+		doPlayerSetGuildId(self.id, id)
+	end,
+	getGuildLevel = function(self)
+		return getPlayerGuildLevel(self.id)
+	end,
+	setGuildLevel = function(self, level)
+		doPlayerSetGuildLevel(self.id, level)
+	end,
+	getGuildNick = function(self)
+		return getPlayerGuildNick(self.id)
+	end,
+	setGuildNick = function(self, nick)
+		doPlayerSetGuildNick(self.id, nick)
+	end,
 	getTown = function(self)
-		return getPlayerTown(self.id)
+		return Town(getPlayerTown(self.id))
 	end,
 	isPlayer = function(self) return true end,
 	getDescription = function(self)
@@ -80,16 +98,38 @@ Player = setmetatable(
 	getBaseMaxMana = function(self)
 		return getCreatureMaxMana(self.id, true)
 	end,
+	removeMoney = function(self, quant)
+		return doPlayerRemoveMoney(self.id, quant)
+	end,
+	removeItem = function(self, itemId, quant)
+		return doPlayerRemoveItem(self.id, itemId, quant)
+	end,
+	addMoney = function(self, value)
+		return doPlayerAddMoney(self.id, value)
+	end,
+	getSlotItem = function(self, slot)
+		local item = getPlayerSlotItem(self.id, slot).uid
+		if isContainer(item) then
+			return Container(item)
+		end
+		return Item(item)
+	end,
 },
 {
 	__index = Creature,
 	__call = function(this, var)
 		local id = 0
-		if tonumber(var) then
-			id = tonumber(var)
-		elseif getPlayerByName(var) then
-			id = getPlayerByName(var)
-		elseif type(var) == "table" then
+		if isNumber(var) then
+			if var >= 268435456 then
+				id = tonumber(var)
+			else
+				id = getPlayerByGUID(var)
+			end
+		elseif isString(var) then
+			if getPlayerByName(var) then
+				id = getPlayerByName(var)
+			end
+		elseif isMetatable(var) then
 			if var:isPlayer() then
 				id = var:getId()
 			end

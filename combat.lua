@@ -9,14 +9,18 @@ Combat = setmetatable(
 	setArea = function(self, area)
 		setCombatArea(self.combat, area)
 	end,
-	addCondition = function(self,condition)
+	addCondition = function(self, condition)
+		if type(condition) == "table" then
+			setCombatCondition(self.combat, condition.condition)
+			return
+		end
 		setCombatCondition(self.combat, condition)
 	end,
 	setCallback = function(self, key, function_name)
 		setCombatCallBack(self.combat, key, function_name)
 	end,
 	execute = function(self, creature, variant)
-		if getmetatable(creature) then
+		if type(creature) == "table" then
 			doCombat(creature:getId(), self.combat, variant)
 			return
 		end

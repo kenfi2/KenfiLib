@@ -1,6 +1,22 @@
 Container = setmetatable(
 {
 	isContainer = function(self) return true end,
+	getSize = function(self)
+		return getContainerSize(self.uid)
+	end,
+	getCapacity = function(self)
+		return getContainerCap(self.uid)
+	end,
+	getEmptySlots = function(self)
+		local slots = self:getCapacity() - self:getSize()
+		return slots
+	end,
+	getItem = function(self, index)
+		local item = getContainerItem(self.uid, index)
+		if item.uid and item.uid > 0 then
+			return Item(item.uid)
+		end
+	end,
 	addItem = function(self, item, count)
 		doAddContainerItem(self.uid, item, count or 1)
 	end,
@@ -10,16 +26,16 @@ Container = setmetatable(
 },
 {
 	__index = Item,
-	__call = function(this, uid)
+	__call = function(this, var)
 		local id = 0
-		if type(uid) == "table" then
-			id = uid:getId()
-			uid = uid:getUnique()
-		elseif getThing(uid) then
-			id = getThing(uid).itemid
+		if isMetatable(var) then
+			id = var:getId()
+			var = var:getUniqueId()
+		elseif getThing(var) then
+			id = getThing(var).itemid
 		end
-		if uid and id then
-			return setmetatable({id = id, uid = uid}, {__index = this})
+		if var and id then
+			return setmetatable({id = id, uid = var}, {__index = this})
 		end
 	end,
 }

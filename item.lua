@@ -1,5 +1,6 @@
 Item = setmetatable(
 {
+	isItem = function(self) return true end,
 	isContainer = function(self) return isContainer(self.uid) end,
 	getPosition = function(self) return Position(getThingPos(self.uid)) end,
 	getCount = function(self) return getThing(self.uid).type == 0 and 1 or getThing(self.uid).type end,
@@ -21,7 +22,7 @@ Item = setmetatable(
 		self:setAttribute("description", value)
 	end,
 	remove = function(self, count)
-		doRemoveItem(self.uid, count or 0)
+		return doRemoveItem(self.uid, count or (self:getCount()))
 	end,
 	moveTo = function(self, toCylinder, ...)
 		if getmetatable(toCylinder) then
@@ -33,17 +34,17 @@ Item = setmetatable(
 	end,
 },
 {
-	__call = function(this, uid)
+	__call = function(this, var)
 		local id = 0
-		if type(uid) == "table" then
-			return setmetatable({id = uid:getId(), uid = uid:getUniqueId()}, {__index = ItemLib, __eq = eq_event(a, b)})
-		elseif getThing(uid) then
-			id = getThing(uid).itemid
+		if isMetatable(var) then
+			id = var:getId()
+			var = var:getUniqueId()
+		elseif getThing(var) then
+			id = getThing(var).itemid
 		end
-		if id and uid then
-			return setmetatable({id = id, uid = uid}, {__index = this, __eq = eq_event(a, b)})
+		if id and var then
+			return setmetatable({id = id, uid = var}, {__index = this, __eq = eq_event(a, b)})
 		end
-		return 
 	end,
 }
 )
