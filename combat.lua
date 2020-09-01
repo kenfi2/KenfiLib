@@ -10,7 +10,7 @@ Combat = setmetatable(
 		setCombatArea(self.combat, area)
 	end,
 	addCondition = function(self, condition)
-		if type(condition) == "table" then
+		if isMetatable(condition) then
 			setCombatCondition(self.combat, condition.condition)
 			return
 		end
@@ -20,11 +20,10 @@ Combat = setmetatable(
 		setCombatCallBack(self.combat, key, function_name)
 	end,
 	execute = function(self, creature, variant)
-		if type(creature) == "table" then
-			doCombat(creature:getId(), self.combat, variant)
-			return
+		if not isMetatable(creature) then
+			return error(("bad argument #1 to 'execute' (metatable expected, got %s)"):type(creature))
 		end
-		doCombat(creature, self.combat, variant)
+		doCombat(creature:getId(), self.combat, variant)
 	end,
 },
 {

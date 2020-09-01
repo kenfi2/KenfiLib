@@ -53,7 +53,7 @@ Creature = setmetatable(
 		function_name(self.id, name)
 	end,
 	addCondition = function(self, condition)
-		if type(condition) == "table" then
+		if isMetatable(condition) then
 			doAddCondition(self.id, condition.condition)
 			return
 		end
@@ -62,7 +62,7 @@ Creature = setmetatable(
 	removeCondition = function(self, conditionType, conditionId, subId)
 		conditionId = conditionId or CONDITIONID_COMBAT
 		subId = subId or 0
-		if type(condition) == "table" then
+		if isMetatable(condition) then
 			doRemoveCondition(self.id, conditionType, subId, conditionId)
 			return
 		end
