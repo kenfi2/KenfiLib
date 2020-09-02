@@ -6,12 +6,12 @@ function isString(var)
 	return type(var) == "string"
 end
 function isNumber(var)
-	return tonumber(var) or type(var) == "number"
+	return type(var) == "number" and tonumber(var)
 end
 function isFunction(var)
 	return type(var) == "function"
 end
-function isMetatable(var) -- this function won't work with strings
+function isMetatable(var)
 	return type(var) == "table" and getmetatable(var)
 end
 --thread function don't need be worked
