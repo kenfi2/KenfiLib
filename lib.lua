@@ -11,8 +11,8 @@ end
 function isFunction(var)
 	return type(var) == "function"
 end
-function isMetatable(var)
-	return getmetatable(var)
+function isMetatable(var) -- this function won't work with strings
+	return type(var) == "table" and getmetatable(var)
 end
 --thread function don't need be worked
 
