@@ -88,12 +88,15 @@ Game = {
 	getSpectators = function(position, multifloor, onlyPlayer, minRangeX, maxRangeX, minRangeY, maxRangeY)
 		spectatorList = getSpectators(position, minRangeX, minRangeY, multifloor)
 		spectatorVec = {}
+		if #spectatorList == 0 then
+			return spectatorVec
+		end
 		for _, creature in ipairs(spectatorList)do
-			creature = Creature(creature)
-			player = Player(creature)
 			if onlyPlayer then
+				player = Player(creature)
 				table.insert(spectatorVec, player)
 			else
+				creature = Creature(creature)
 				table.insert(spectatorVec, creature)
 			end
 		end

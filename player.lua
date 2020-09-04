@@ -21,6 +21,9 @@ Player = setmetatable(
 	getTown = function(self)
 		return Town(getPlayerTown(self.id))
 	end,
+	isPremium = function(self)
+		return getPlayerPremiumDays(self.id) > 0 or getBooleanFromString(getConfigValue('freePremium'))
+	end,
 	isPlayer = function(self) return true end,
 	getDescription = function(self)
 		return ("%s. %s"):format(getPlayerNameDescription(self.id), getPlayerSpecialDescription(self.id))
@@ -50,6 +53,9 @@ Player = setmetatable(
 			return
 		end
 		doPlayerSendTextMessage(self.id, type, message)
+	end,
+	sendCancelMessage = function(self, message)
+		doPlayerSendCancel(self.id, message)
 	end,
 	getMana = function(self) return getCreatureMana(self.id) end,
 	getMaxMana = function(self) return getCreatureMaxMana(self.id) end,
@@ -113,6 +119,9 @@ Player = setmetatable(
 			return Container(item)
 		end
 		return Item(item)
+	end,
+	popupFYI = function(self, msg)
+		return doPlayerPopupFYI(self.id, msg)
 	end,
 },
 {

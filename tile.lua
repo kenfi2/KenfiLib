@@ -7,7 +7,10 @@ Tile = setmetatable(
 		return Position(self)
 	end,
 	getTopCreature = function(self)
-		return Creature(getTopCreature(self).uid)
+		local uid = getTopCreature(self).uid
+		if uid > 0 then
+			return Creature(uid)
+		end
 	end,
 	getItemById = function(self, itemid, subType)
 		subType = subType or -1

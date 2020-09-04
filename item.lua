@@ -12,6 +12,9 @@ Item = setmetatable(
 	setAttribute = function(self, key, value)
 		doItemSetAttribute(self.uid, key, value)
 	end,
+	setActionId = function(self, value)
+		self:setAttribute("aid", value)
+	end,
 	getName = function(self) 
 		return getItemAttribute(self.uid, "name") or getItemInfo(getThing(self.uid).itemid).name
 	end,

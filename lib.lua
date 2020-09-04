@@ -6,7 +6,7 @@ function isString(var)
 	return type(var) == "string"
 end
 function isNumber(var)
-	return type(var) == "number" and tonumber(var)
+	return tonumber(var) and type(var) == "number"
 end
 function isFunction(var)
 	return type(var) == "function"
@@ -37,6 +37,10 @@ string.tonumber = function(self) -- Special function that returns, in order, all
 		number = number..i
 	end
 	return tonumber(signal..number)
+end
+
+string.empty = function(self)
+	return (self == "")
 end
 
 function eq_event(a,b) -- __eq metamethod function used in all developed classes
