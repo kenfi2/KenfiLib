@@ -21,12 +21,37 @@ Player = setmetatable(
 	getTown = function(self)
 		return Town(getPlayerTown(self.id))
 	end,
+	addOutfit = function(self, lookType)
+		doPlayerAddOutfit(self.id, lookType)
+	end,
+	addOutfitAddon = function(self, lookType, addon)
+		if not tonumber(addon) then
+			return error(("bad argument #2 to 'addOutfitAddon' (number expected, got %s)"):format(type(addon)))
+		elseif tonumber(addon) <= 0 then
+			return error(("bad argument #2 to 'addOutfitAddon' (the numeric value must be greater than 0)"):format(type(addon)))
+		end
+		doPlayerAddOutfit(self.id, lookType, addon)
+	end,
+	removeOutfit = function(self, outfit)
+		doPlayerRemoveOutfit(self.id, outfit)
+	end,
+	removeOutfitAddon = function(self, outfit, addon)
+		if not tonumber(addon) then
+			return error(("bad argument #2 to 'removeOutfitAddon' (number expected, got %s)"):format(type(addon)))
+		elseif tonumber(addon) <= 0 then
+			return error(("bad argument #2 to 'removeOutfitAddon' (the numeric value must be greater than 0)"):format(type(addon)))
+		end
+		doPlayerRemoveOutfit(self.id, outfit, addon)
+	end,
 	isPremium = function(self)
 		return getPlayerPremiumDays(self.id) > 0 or getBooleanFromString(getConfigValue('freePremium'))
 	end,
 	isPlayer = function(self) return true end,
 	getDescription = function(self)
 		return ("%s. %s"):format(getPlayerNameDescription(self.id), getPlayerSpecialDescription(self.id))
+	end,
+	getItemCount = function(self, itemId, ...)
+		return getPlayerItemCount(self.id, itemId, ...)
 	end,
 	getLevel = function(self) return getPlayerLevel(self.id) end,
 	getGuid = function(self) return getPlayerGUID(self.id) end,
@@ -107,8 +132,8 @@ Player = setmetatable(
 	removeMoney = function(self, quant)
 		return doPlayerRemoveMoney(self.id, quant)
 	end,
-	removeItem = function(self, itemId, quant)
-		return doPlayerRemoveItem(self.id, itemId, quant)
+	removeItem = function(self, itemId, quant, ...)
+		return doPlayerRemoveItem(self.id, itemId, quant, ...)
 	end,
 	addMoney = function(self, value)
 		return doPlayerAddMoney(self.id, value)

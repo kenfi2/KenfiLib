@@ -1,11 +1,15 @@
 Item = setmetatable(
 {
 	isItem = function(self) return true end,
+	getParent = function(self)
+		return getItemParent(self.uid)
+	end,
 	isContainer = function(self) return isContainer(self.uid) end,
 	getPosition = function(self) return Position(getThingPos(self.uid)) end,
-	getCount = function(self) return getThing(self.uid).type == 0 and 1 or getThing(self.uid).type end,
-	getId = function(self) return self.id end,
+	getCount = function(self) return self.type == 0 and 1 or self.type end,
+	getId = function(self) return self.itemid end,
 	getUniqueId = function(self) return self.uid end,
+	getActionId = function(self) return self.aid end,
 	getAttribute = function(self, key)
 		return getItemAttribute(self.uid, key)
 	end,
@@ -16,19 +20,24 @@ Item = setmetatable(
 		self:setAttribute("aid", value)
 	end,
 	getName = function(self) 
-		return getItemAttribute(self.uid, "name") or getItemInfo(getThing(self.uid).itemid).name
+		local itemName = ""
+		local itemType = ItemType(self.itemid)
+		itemName = getItemAttribute(self.uid, "name") or itemType:getName()
+		return itemName
 	end,
 	getDescription = function(self)
-		return getItemAttribute(self.uid, "description") or getItemInfo(getThing(self.uid).itemid).description
+		local itemDescription = ""
+		local itemType = ItemType(self.itemid)
+		itemName = getItemAttribute(self.uid, "description") or itemType:getDescription()
 	end,
 	setDescription = function(self, value)
 		self:setAttribute("description", value)
 	end,
 	remove = function(self, count)
-		return doRemoveItem(self.uid, count or (self:getCount()))
+		return PushFunction(doRemoveItem, self.uid, count or (self:getCount()))
 	end,
 	moveTo = function(self, toCylinder, ...)
-		if getmetatable(toCylinder) then
+		if isMetatable(toCylinder) and not (toCylinder.x or toCylinder.y or toCylinder.z) then
 			self:remove()
 			error("bad argument #2 to 'moveTo' (table expected, got metatable)")
 			return
@@ -42,11 +51,10 @@ Item = setmetatable(
 		if isMetatable(var) then
 			id = var:getId()
 			var = var:getUniqueId()
-		elseif getThing(var) then
-			id = getThing(var).itemid
 		end
-		if id and var then
-			return setmetatable({id = id, uid = var}, {__index = this, __eq = eq_event(a, b)})
+		local value = PushFunction(getThing, var)
+		if value.uid ~= 0 then
+			return setmetatable(value, {__index = this, __eq = eq_event(a, b)})
 		end
 	end,
 }

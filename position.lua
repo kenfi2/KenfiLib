@@ -35,7 +35,7 @@ Position = setmetatable(
 			__add = function(this, value)
 				if isTable(value) then
 					if value.x and value.y and value.z then
-						return Position(this.x+value.x,this.y+value.x,this.z+value.x)
+						return Position(this.x+value.x,this.y+value.y,this.z+value.z)
 					end
 				elseif isNumber(value) then
 					return Position(this.x+value,this.y+value,this.z+value)

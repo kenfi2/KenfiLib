@@ -1,4 +1,7 @@
 --basical functions.
+function PushFunction(function_name, ...)
+	return select(2, pcall(function_name, ...))
+end
 function isTable(var)
 	return type(var) == "table"
 end
@@ -53,7 +56,7 @@ end
 dofile('data/lib/KenfiLib/game.lua') -- 19/24: Approximately 80% Functions TFS 1.3 (4 additional functions)
 dofile('data/lib/KenfiLib/variant.lua') -- 3/3: 100% Functions TFS 1.3
 dofile('data/lib/KenfiLib/position.lua') -- 4/4: 100% Functions TFS 1.3
-dofile('data/lib/KenfiLib/tile.lua') -- 7/29: Approximately 25% Functions TFS 1.3
+dofile('data/lib/KenfiLib/tile.lua') -- 22/29: Approximately 25% Functions TFS 1.3
 --Networkmessage isn't workable in this version
 dofile('data/lib/KenfiLib/item.lua') -- 13/33: Approximately 40% Functions TFS 1.3
 dofile('data/lib/KenfiLib/container.lua') -- 7/12: Approximately 60% Functions TFS 1.3

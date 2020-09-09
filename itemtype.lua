@@ -8,6 +8,7 @@ ItemType = setmetatable(
 	isRune = function(self) return self.group == ITEM_TYPE_RUNE end,
 	isStackable = function(self) return self.stackable end,
 	getName = function(self) return self.name end,
+	getDescription = function(self) return self.description end,
 	getId = function(self) return self.id end,
 },
 {

@@ -31,11 +31,10 @@ Container = setmetatable(
 		if isMetatable(var) then
 			id = var:getId()
 			var = var:getUniqueId()
-		elseif getThing(var) then
-			id = getThing(var).itemid
 		end
-		if var and id then
-			return setmetatable({id = id, uid = var}, {__index = this})
+		local value = PushFunction(getThing, var)
+		if value.uid > 0 then
+			return setmetatable(value, {__index = this})
 		end
 	end,
 }
