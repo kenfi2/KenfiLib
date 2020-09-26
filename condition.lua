@@ -1,4 +1,4 @@
-Condition = setmetatable(
+return setmetatable(
 {
 	setTicks = function(self, value)
 		setConditionParam(self.condition, CONDITION_PARAM_TICKS, value)
@@ -19,7 +19,7 @@ Condition = setmetatable(
 },
 {
 	__call = function(this, conditionType, conditionId)
-		return setmetatable({condition = createConditionObject(conditionType, 0, false, 0, conditionId), id = conditionId}, {__index = this, __eq = eq_event(a, b)})
+		return setmetatable({condition = createConditionObject(conditionType, 0, false, 0, conditionId), id = conditionId}, {__index = this, __eq = eq_event})
 	end,
 }
 )

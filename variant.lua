@@ -1,4 +1,4 @@
-Variant = setmetatable(
+return setmetatable(
 {
 	getNumber = function(self)
 		return self.number

@@ -1,4 +1,4 @@
-Position = setmetatable(
+return setmetatable(
 {
 	getDistance = function(self, positionEx)
 		local x, y = math.abs(self.x - positionEx.x), math.abs(self.y - positionEx.y)
@@ -12,11 +12,11 @@ Position = setmetatable(
 	isSightClear = function(self, positionEx, ...)
 		return isSightClear(self, positionEx, ...)
 	end,
-	sendMagicEffect = function(self, effect)
-		doSendMagicEffect(self, effect)
+	sendMagicEffect = function(self, effect, ...)
+		doSendMagicEffect(self, effect, ...)
 	end,
-	sendDistanceEffect = function(self, positionEx, distanceEffect)
-		doSendDistanceShoot(self, positionEx, distanceEffect)
+	sendDistanceEffect = function(self, positionEx, distanceEffect, ...)
+		doSendDistanceShoot(self, positionEx, distanceEffect, ...)
 	end,
 },
 {
@@ -31,7 +31,9 @@ Position = setmetatable(
 		return setmetatable(pos,
 		{
 			__index = this,
-			__eq = eq_event(a, b),
+			__eq = function(a,b)
+				return a.x == b.x and a.y == b.y and a.z == b.z
+			end,
 			__add = function(this, value)
 				if isTable(value) then
 					if value.x and value.y and value.z then
@@ -49,6 +51,17 @@ Position = setmetatable(
 				elseif isNumber(value) then
 					return Position(this.x-value,this.y-value,this.z-value)
 				end
+			end,
+			__concat = function(a, b)
+				local concat = ""
+				if isMetatable(a) and not isMetatable(b) then
+					concat = ("%s\t%s\t%s\t%s"):format(a.x,a.y,a.z,b)
+				elseif isMetatable(b) and not isMetatable(a) then
+					concat = ("%s\t%s\t%s\t%s"):format(a,b.x,b.y,b.z)
+				else
+					concat = ("%s\t%s\t%s\t%s\t%s\t%s\t"):format(a.x,a.y,a.z,b.x,b.y,b.z)
+				end
+				return concat
 			end,
 		}
 		)

@@ -1,4 +1,4 @@
-Guild = setmetatable( 
+return setmetatable(
 {
 	getId = function(self)
 		return self.id
@@ -29,7 +29,7 @@ Guild = setmetatable(
 		elseif isMetatable(var) then
 			var = var:getId()
 		end
-		return setmetatable({id = var, name = name}, {__index = this, __eq = eq_event(a, b)})
+		return setmetatable({id = var, name = name}, {__index = this, __eq = eq_event})
 	end,
 }
 )

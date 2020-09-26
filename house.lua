@@ -1,4 +1,4 @@
-House = setmetatable(
+return setmetatable(
 {
 	getId = function(self)
 		return self.id
@@ -70,10 +70,9 @@ House = setmetatable(
 		return self.size
 	end,
 	canEditAccessList = function(self, player)
+		local list = ''
 		for i = 256,257 do
-			if list:find(player:getName()) then
-				return true
-			end
+			list = list..self:getAccessList(i)
 		end
 		return false
 	end,
@@ -92,7 +91,7 @@ House = setmetatable(
 		elseif isNumber(var) then
 			id = tonumber(var)
 		end
-		return setmetatable(getHouseInfo(id), {__index = this, __eq = eq_event(a, b),})
+		return setmetatable(getHouseInfo(id), {__index = this, __eq = eq_event})
 	end,
 }
 )

@@ -1,4 +1,4 @@
-Item = setmetatable(
+return setmetatable(
 {
 	isItem = function(self) return true end,
 	getParent = function(self)
@@ -29,6 +29,7 @@ Item = setmetatable(
 		local itemDescription = ""
 		local itemType = ItemType(self.itemid)
 		itemName = getItemAttribute(self.uid, "description") or itemType:getDescription()
+		return itemName
 	end,
 	setDescription = function(self, value)
 		self:setAttribute("description", value)
@@ -54,7 +55,7 @@ Item = setmetatable(
 		end
 		local value = PushFunction(getThing, var)
 		if value.uid ~= 0 then
-			return setmetatable(value, {__index = this, __eq = eq_event(a, b)})
+			return setmetatable(value, {__index = this, __eq = eq_event})
 		end
 	end,
 }

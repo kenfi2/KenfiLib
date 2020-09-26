@@ -1,4 +1,4 @@
-Vocation = setmetatable( 
+return setmetatable( 
 {
 	getId = function(self)
 		return self.id
@@ -66,7 +66,7 @@ Vocation = setmetatable(
 		elseif isNumber(uid) then
 			id = tonumber(uid)
 		end
-		return setmetatable(getVocationInfo(id), {__index = this, __eq = eq_event(a, b)})
+		return setmetatable(getVocationInfo(id), {__index = this, __eq = eq_event})
 	end,
 }
 )

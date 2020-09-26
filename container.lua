@@ -1,4 +1,4 @@
-Container = setmetatable(
+return setmetatable(
 {
 	isContainer = function(self) return true end,
 	getSize = function(self)

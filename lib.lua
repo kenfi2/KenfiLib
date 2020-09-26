@@ -17,6 +17,9 @@ end
 function isMetatable(var)
 	return type(var) == "table" and getmetatable(var)
 end
+function isBoolean(var)
+	return type(var) == "boolean"
+end
 --thread function don't need be worked
 
 -- basical strings function.
@@ -43,38 +46,92 @@ string.tonumber = function(self) -- Special function that returns, in order, all
 end
 
 string.empty = function(self)
-	return (self == "")
+	local count = #self
+	return count == 0
 end
 
-function eq_event(a,b) -- __eq metamethod function used in all developed classes
-	if getmetatable(a) and getmetatable(b) then
-		return getmetatable(a) == getmetatable(b)
+string.isTable = function(self)
+    return self:find(1,1) == "{" and self:find(self:len()) == "}"
+end
+
+table.empty = function(tb)
+	local count = 0
+	for _ in pairs(tb) do
+		count = count + 1
+	end
+	return count == 0
+end
+
+table.tostring = function(tb, err)
+    var = err and error or print
+    local str = '{'
+    local begin = true
+    for i, v in pairs(tb) do
+        local index = nil
+        if tonumber(i) then
+            index = ("%d"):format(i)
+        else
+            index = ("'%s'"):format(i)
+        end
+        if not begin then
+            str = str..", "
+        else
+            begin = false
+        end
+        if type(v) == "table" or type(v) == "userdata" then
+            str = ("%s[%s] = %s"):format(str, index, table.tostring(v))
+        elseif type(v) == "string" then
+            str = ("%s[%s] = '%s'"):format(str, index, v)
+        elseif type(v) == "number" then
+            str = ("%s[%s] = %d"):format(str, index, v)
+        else
+            begin = true
+            var(("is not possible convert '%s' to string. [%s])"):format(type(v), index))
+        end
+    end
+    str = str.."}"
+    return str
+end
+
+function string.totable(self)
+    local str = ""
+    if not self:isTable() then
+        str = ("return {}")
+    else
+        str = ("return %s"):format(self)
+    end
+    local bool, func = pcall(assert, loadstring(str))
+    if not bool then
+        local find = func:find(":")
+        return error(func:sub(find+4, func:len()),2)
+    end
+    return func()
+end
+
+eq_event = function(first, second) -- __eq metamethod function used in all developed classes
+	if getmetatable(first) and getmetatable(second) then
+		return getmetatable(first) == getmetatable(second)
 	end
 end
 
---Principal
-dofile('data/lib/KenfiLib/game.lua') -- 19/24: Approximately 80% Functions TFS 1.3 (4 additional functions)
-dofile('data/lib/KenfiLib/variant.lua') -- 3/3: 100% Functions TFS 1.3
-dofile('data/lib/KenfiLib/position.lua') -- 4/4: 100% Functions TFS 1.3
-dofile('data/lib/KenfiLib/tile.lua') -- 22/29: Approximately 25% Functions TFS 1.3
---Networkmessage isn't workable in this version
-dofile('data/lib/KenfiLib/item.lua') -- 13/33: Approximately 40% Functions TFS 1.3
-dofile('data/lib/KenfiLib/container.lua') -- 7/12: Approximately 60% Functions TFS 1.3
-dofile('data/lib/KenfiLib/teleport.lua') -- 2/2: 50% Functions TFS 1.3 (because the 'getDestination' function doesn't exist in this version)
-dofile('data/lib/KenfiLib/creature.lua') -- 21/53: Approximately 40% Functions TFS 1.3
-dofile('data/lib/KenfiLib/player.lua') -- 37/105: Approximately 35% Functions TFS 1.3 ;(
-dofile('data/lib/KenfiLib/monster.lua') -- 2/21: Approximately 10% Functions TFS 1.3  ;(
-dofile('data/lib/KenfiLib/npc.lua') -- 100% Functions TFS 1.3
-dofile('data/lib/KenfiLib/guild.lua') -- 4/8: 50% Functions TFS 1.3 (because in this version, this class was worked on using the player id)
-dofile('data/lib/KenfiLib/group.lua') -- 6/7: Approximately 85% Functions TFS 1.3 (1 additional function)
-dofile('data/lib/KenfiLib/vocation.lua') -- 16/19: Approximately 85% Functions TFS 1.3
-dofile('data/lib/KenfiLib/town.lua') -- 100% Functions TFS 1.3
-dofile('data/lib/KenfiLib/house.lua') -- 16/20: 80% Functions TFS 1.3
-dofile('data/lib/KenfiLib/itemtype.lua') -- 9/43: Approximately 20% Functions TFS 1.3
-dofile('data/lib/KenfiLib/combat.lua') -- 5/6: Approximately 80% Functions TFS 1.3 ('setOrigin' function doesn't exist ins this version)
-dofile('data/lib/KenfiLib/condition.lua') -- 5/12: Approximately 40% Functions TFS 1.3
-dofile('data/lib/KenfiLib/monstertype.lua') -- MonsterType SET functions does not work in this version. 0% Functions TFS 1.3
---Loot lib must be created manually
---MonsterSpell isn't workable in this version
---PARTY
---Callback's isn't workable in this version.
+Game = dofile('data/lib/KenfiLib/game.lua')
+Variant = dofile('data/lib/KenfiLib/variant.lua')
+Position = dofile('data/lib/KenfiLib/position.lua')
+Tile = dofile('data/lib/KenfiLib/tile.lua')
+Item = dofile('data/lib/KenfiLib/item.lua')
+Container = dofile('data/lib/KenfiLib/container.lua')
+Teleport = dofile('data/lib/KenfiLib/teleport.lua')
+Creature = dofile('data/lib/KenfiLib/creature.lua')
+Player = dofile('data/lib/KenfiLib/player.lua')
+Monster = dofile('data/lib/KenfiLib/monster.lua')
+Npc = dofile('data/lib/KenfiLib/npc.lua')
+Guild = dofile('data/lib/KenfiLib/guild.lua')
+Group = dofile('data/lib/KenfiLib/group.lua')
+Vocation = dofile('data/lib/KenfiLib/vocation.lua')
+Town = dofile('data/lib/KenfiLib/town.lua')
+House = dofile('data/lib/KenfiLib/house.lua')
+ItemType = dofile('data/lib/KenfiLib/itemtype.lua')
+Combat = dofile('data/lib/KenfiLib/combat.lua')
+Condition = dofile('data/lib/KenfiLib/condition.lua')
+MonsterType = dofile('data/lib/KenfiLib/monstertype.lua')
+--PARTY ;(

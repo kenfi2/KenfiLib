@@ -1,4 +1,4 @@
-Player = setmetatable(
+return setmetatable(
 {
 	getGuild = function(self)
 		return Guild(getPlayerGuildId(self.id), getPlayerGuildName(self.id))
@@ -120,8 +120,8 @@ Player = setmetatable(
 	getManaSpent = function(self)
 		return getPlayerSpentMana(self.id)
 	end,
-	addManaSpent = function(self, amount)
-		doPlayerAddSpentMana(self.id, amount, true)
+	addManaSpent = function(self, amount, bool)
+		doPlayerAddSpentMana(self.id, amount, bool)
 	end,
 	getBaseMaxHealth = function(self)
 		return getCreatureMaxHealth(self.id, true)
@@ -139,11 +139,14 @@ Player = setmetatable(
 		return doPlayerAddMoney(self.id, value)
 	end,
 	getSlotItem = function(self, slot)
-		local item = getPlayerSlotItem(self.id, slot).uid
-		if isContainer(item) then
-			return Container(item)
+		local item = PushFunction(getPlayerSlotItem, self.id, slot)
+		if item.uid == 0 then
+			return
 		end
-		return Item(item)
+		if isContainer(item.uid) then
+			return Container(item.uid)
+		end
+		return Item(item.uid)
 	end,
 	popupFYI = function(self, msg)
 		return doPlayerPopupFYI(self.id, msg)
@@ -169,7 +172,18 @@ Player = setmetatable(
 			end
 		end
 		if isPlayer(id) then
-			return setmetatable({id = id}, {__index = this})
+			return setmetatable(
+				{
+					id = id
+				},
+				{
+					__index = this,
+					__unm = function(self)
+						local id = self.id
+						return Creature(id)
+					end,
+				}
+			)
 		end
 		return error("attempt to create metatable 'Player' (not player value)")
 	end,

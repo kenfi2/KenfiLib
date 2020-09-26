@@ -1,4 +1,4 @@
-ItemType = setmetatable( 
+return setmetatable( 
 {
 	isCorpse = function(self) return self.corpseType ~= 0 end,
 	isDoor = function(self) return self.group == ITEM_TYPE_DOOR end,
@@ -26,7 +26,7 @@ ItemType = setmetatable(
 		end
 		local itemTable = getItemInfo(var)
 		itemTable.id = var
-		return setmetatable(itemTable, {__index = this, __eq = eq_event(a, b)})
+		return setmetatable(itemTable, {__index = this, __eq = eq_event})
 	end,
 }
 )

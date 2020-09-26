@@ -1,7 +1,10 @@
-Tile = setmetatable(
+return setmetatable(
 {
 	getInfo = function(self)
 		return getTileInfo(self)
+	end,
+	getHouse = function(self)
+		return House(getHouseFromPosition(self))
 	end,
 	getPosition = function(self)
 		return Position(self)
@@ -172,7 +175,9 @@ Tile = setmetatable(
 		return setmetatable(pos,
 		{
 			__index = this,
-			__eq = eq_event(a, b)
+			__eq = function(a,b)
+				return a.x == b.x and a.y == b.y and a.z == b.z and a.stackpos == b.stackpos
+			end,
 		}
 		)
 	end,

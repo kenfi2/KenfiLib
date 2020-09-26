@@ -1,4 +1,4 @@
-Game = {
+local tb = {
 	getGameState = function() return getGameState() end,
 	setGameState = function(id) doSetGameState(id) end,
 	getWorldType = function()
@@ -19,11 +19,17 @@ Game = {
 	createContainer = function()
 		--
 	end,
-	createMonster = function(name, pos, extend, force)
-		return Monster(doCreateMonster(name, pos, extend, force))
+	createMonster = function(name, pos, ...)
+		local uid = doCreateMonster(name, pos, ...)
+		if uid then
+			return Monster(uid)
+		end
 	end,
 	createNpc = function(name, pos)
-		return Npc(doCreateNpc(name, pos))
+		local uid = doCreateNpc(name, pos)
+		if uid then
+			return Npc(uid)
+		end
 	end,
 	createTile = function()
 		-- don't work in this version. Use Tile()
@@ -171,3 +177,4 @@ nextEvent = {
 		return Game.sendTextMessage(type, (message):format(Game.getNextEvent()))
 	end,	
 }
+return tb

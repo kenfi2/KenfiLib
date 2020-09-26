@@ -1,6 +1,6 @@
-Npc = setmetatable(
+return setmetatable(
 {
-	isNpc = function(self) return true end,
+	isNpc = function() return true end,
 	setMasterPos = function(self)
 		--
 	end,
@@ -21,7 +21,18 @@ Npc = setmetatable(
 			end
 		end
 		if isNpc(id) then
-			return setmetatable({id = id}, {__index = this})
+			return setmetatable(
+				{
+					id = id
+				},
+				{
+					__index = this,
+					__unm = function(self)
+						local id = self.id
+						return Creature(id)
+					end,
+				}
+			)
 		end
 		return error("attempt to create metatable 'Npc' (not npc value)")
 	end,

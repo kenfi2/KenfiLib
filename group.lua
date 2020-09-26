@@ -1,4 +1,4 @@
-Group = setmetatable( 
+return setmetatable( 
 {
 	getId = function(self)
 		return self.id
@@ -26,10 +26,8 @@ Group = setmetatable(
 	end,
 },
 {
-	__call = function(this, uid, name)
-		return setmetatable(getGroupInfo(id, true), {__index = this, __eq = eq_event(a, b)})
+	__call = function(this, uid)
+		return setmetatable(getGroupInfo(id, true), {__index = this, __eq = eq_event})
 	end,
 }
 )
-
--- In this version, this class was developed using the player's id

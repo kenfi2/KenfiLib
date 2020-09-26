@@ -1,4 +1,4 @@
-Teleport = setmetatable(
+return setmetatable(
 {
 	getDestination = function(self)
 		return self.destination and Position(self.destination)

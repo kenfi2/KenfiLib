@@ -1,8 +1,11 @@
-Monster = setmetatable(
+return setmetatable(
 {
 	isMonster = function(self) return true end,
 	getDescription = function(self)
 		return getMonsterInfo(self:getName()).description
+	end,
+	getType = function(self)
+		return MonsterType(self)
 	end,
 },
 {
@@ -21,7 +24,18 @@ Monster = setmetatable(
 			end
 		end
 		if isMonster(id) then
-			return setmetatable({id = id}, {__index = this})
+			return setmetatable(
+				{
+					id = id
+				},
+				{
+					__index = this,
+					__unm = function(self)
+						local id = self.id
+						return Creature(id)
+					end,
+				}
+			)
 		end
 		return error("attempt to create metatable 'Monster' (not monster value)")
 	end,

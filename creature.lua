@@ -1,4 +1,4 @@
-Creature = setmetatable(
+return setmetatable(
 {
 	getPlayer = function(self)
 		if self:isPlayer() then
@@ -22,10 +22,19 @@ Creature = setmetatable(
 	getHealth = function(self) return getCreatureHealth(self.id) end,
 	getMaxHealth = function(self) return getCreatureMaxHealth(self.id) end,
 	getStorageValue = function(self,key)
-		return getCreatureStorage(self.id, key)
+		local value = getCreatureStorage(self.id, key)
+		if value:isTable() then
+			return totable(value)
+		end
+		return value
 	end,
 	setStorageValue = function(self, key, value)
-		doCreatureSetStorage(self.id, key, value)
+		if isTable(value) then
+			value = table.tostring(value)
+			doCreatureSetStorage(self.id, key, value)
+		else
+			doCreatureSetStorage(self.id, key, value)
+		end
 	end,
 	getName = function(self) 
 		return getCreatureName(self.id)
@@ -34,12 +43,15 @@ Creature = setmetatable(
 		doPlayerSetSpecialDescription(self.id, value)
 	end,
 	getId = function(self) return self.id end,
-	getPosition = function(self) return Position(getThingPos(self.id)) end,
+	getPosition = function(self)
+		local pos = PushFunction(getThingPos, self.id)
+		return Position(pos)
+	end,
 	getTile = function(self) return Tile(self:getPosition()) end,
 	teleportTo = function(self, toPos, ...)
 		doTeleportThing(self.id, toPos, ...)
 	end,
-	remove = function(self, count)
+	remove = function(self)
 		doRemoveCreature(self.id)
 	end,
 	getSkull = function(self, ...)
@@ -62,10 +74,7 @@ Creature = setmetatable(
 	removeCondition = function(self, conditionType, conditionId, subId)
 		conditionId = conditionId or CONDITIONID_COMBAT
 		subId = subId or 0
-		if isMetatable(condition) then
-			doRemoveCondition(self.id, conditionType, subId, conditionId)
-			return
-		end
+		doRemoveCondition(self.id, conditionType, subId, conditionId)
 	end,
 	getOutfit = function(self)
 		return getCreatureOutfit(self.id)
@@ -73,9 +82,32 @@ Creature = setmetatable(
 	setOutfit = function(self, outfit)
 		doCreatureChangeOutfit(self.id, outfit)
 	end,
+	addHealth = function(self, health)
+		doCreatureAddHealth(self.id, health)
+	end,
+	getMaster = function(self)
+		local masterId = getCreatureMaster(self.id)
+		if masterId and masterId > 0 then
+			return Creature(masterId)
+		end
+	end,
+	setMaster = function(self, master)
+		local cid = master:getId()
+		return doConvinceCreature(cid, self:getId())
+	end,
+	isSummon = function(self)
+		return self:getMaster()
+	end,
+	getSummons = function(self)
+		local summons = {}
+		for i, v in ipairs(getCreatureSummons(self.id)) do
+			table.insert(summons, Creature(v))
+		end
+		return summons
+	end,
 },
 {
-	__eq = eq_event(a,b),
+	__eq = eq_event,
 	__call = function(this, var)
 		local id = 0
 		if isNumber(var) then
@@ -84,9 +116,25 @@ Creature = setmetatable(
 			if getCreatureByName(var) then
 				id = getCreatureByName(var)
 			end
+		elseif isMetatable(var) then
+			return Creature(var.id)
 		end
 		if isCreature(id) then
-			return setmetatable({id = id}, {__index = this})
+			if isNpc(id) then
+				return Npc(id)
+			elseif isPlayer(id) then
+				return Player(id)
+			elseif isMonster(id) then
+				return Monster(id)
+			end
+			return setmetatable(
+				{
+					id = id
+				},
+				{
+					__index = this
+				}
+			)
 		end
 		return error("attempt to create metatable 'Creature' (not creature value)")
 	end,

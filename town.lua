@@ -1,4 +1,4 @@
-Town = setmetatable(
+return setmetatable(
 {
 	getId = function(self) return self.id end,
 	getName = function(self) return getTownName(self.id) end,
@@ -11,7 +11,7 @@ Town = setmetatable(
 		if isMetatable(var) then
 			var = var:getId()
 		end
-		return setmetatable({id = var}, {__index = this, __eq = eq_event(a, b),})
+		return setmetatable({id = var}, {__index = this, __eq = eq_event})
 	end,
 }
 )
