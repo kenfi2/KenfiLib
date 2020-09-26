@@ -42,7 +42,7 @@ string.empty = function(self)
 	return count == 0
 end
 string.isTable = function(self)
-    return self:find(1,1) == "{" and self:find(self:len()) == "}"
+    return self:sub(1, 1) == "{" and self:sub(self:len()) == "}"
 end
 table.empty = function(tb)
 	local count = 0
