@@ -30,4 +30,4 @@ return setmetatable(
 		return setmetatable(getGroupInfo(id, true), {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

@@ -40,4 +40,4 @@ return setmetatable(
 		return error("attempt to create metatable 'Monster' (not monster value)")
 	end,
 }
-)
+)--

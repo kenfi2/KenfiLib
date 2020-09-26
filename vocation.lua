@@ -69,4 +69,4 @@ return setmetatable(
 		return setmetatable(getVocationInfo(id), {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

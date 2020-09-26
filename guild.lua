@@ -33,5 +33,4 @@ return setmetatable(
 	end,
 }
 )
-
 -- In this version, this class was developed using the player's id

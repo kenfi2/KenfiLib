@@ -176,5 +176,5 @@ nextEvent = {
 	sendTextMessage = function(type, message)
 		return Game.sendTextMessage(type, (message):format(Game.getNextEvent()))
 	end,	
-}
+}--
 return tb

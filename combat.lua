@@ -31,4 +31,4 @@ return setmetatable(
 		return setmetatable({combat = createCombatObject()}, {__index = this, __eq = eq_event})
 	end,
 }
-)--
+)

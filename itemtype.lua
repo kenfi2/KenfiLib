@@ -29,4 +29,4 @@ return setmetatable(
 		return setmetatable(itemTable, {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

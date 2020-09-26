@@ -139,4 +139,4 @@ return setmetatable(
 		return error("attempt to create metatable 'Creature' (not creature value)")
 	end,
 }
-)
+)--

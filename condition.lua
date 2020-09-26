@@ -22,4 +22,4 @@ return setmetatable(
 		return setmetatable({condition = createConditionObject(conditionType, 0, false, 0, conditionId), id = conditionId}, {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

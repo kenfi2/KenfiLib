@@ -37,4 +37,4 @@ return setmetatable(
 		return error("attempt to create metatable 'Npc' (not npc value)")
 	end,
 }
-)
+)--

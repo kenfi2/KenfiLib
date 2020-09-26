@@ -94,4 +94,4 @@ return setmetatable(
 		return setmetatable(getHouseInfo(id), {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

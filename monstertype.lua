@@ -16,4 +16,4 @@ return setmetatable(
 		return setmetatable(getMonsterInfo(var), {__index = this, __eq = eq_event})
 	end,
 }
-)
+)--

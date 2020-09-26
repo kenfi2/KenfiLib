@@ -1,4 +1,3 @@
---basical functions.
 function PushFunction(function_name, ...)
 	return select(2, pcall(function_name, ...))
 end
@@ -20,14 +19,9 @@ end
 function isBoolean(var)
 	return type(var) == "boolean"
 end
---thread function don't need be worked
-
--- basical strings function.
-
 string.trim = function(self) -- Replace this function with 'string.trim' in the folder 'data/lib/011-string.lua'
 	return self:match'^()%s*$' and '' or self:match'^%s*(.*%S)'
 end
-
 string.splitTrimmed = function(self, sep) -- This function has the same functionality as 'string.explode'
 	local res = {}
 	for v in self:gmatch("([^" .. sep .. "]+)") do
@@ -35,7 +29,6 @@ string.splitTrimmed = function(self, sep) -- This function has the same function
 	end
 	return res
 end
-
 string.tonumber = function(self) -- Special function that returns, in order, all numbers in string
 	local signal = (self:match("%p") == "-" and self:match("%p") or "")
 	local number = ""
@@ -44,16 +37,13 @@ string.tonumber = function(self) -- Special function that returns, in order, all
 	end
 	return tonumber(signal..number)
 end
-
 string.empty = function(self)
 	local count = #self
 	return count == 0
 end
-
 string.isTable = function(self)
     return self:find(1,1) == "{" and self:find(self:len()) == "}"
 end
-
 table.empty = function(tb)
 	local count = 0
 	for _ in pairs(tb) do
@@ -61,7 +51,6 @@ table.empty = function(tb)
 	end
 	return count == 0
 end
-
 table.tostring = function(tb, err)
     var = err and error or print
     local str = '{'
@@ -92,7 +81,6 @@ table.tostring = function(tb, err)
     str = str.."}"
     return str
 end
-
 function string.totable(self)
     local str = ""
     if not self:isTable() then
@@ -107,13 +95,11 @@ function string.totable(self)
     end
     return func()
 end
-
 eq_event = function(first, second) -- __eq metamethod function used in all developed classes
 	if getmetatable(first) and getmetatable(second) then
 		return getmetatable(first) == getmetatable(second)
 	end
 end
-
 Game = dofile('data/lib/KenfiLib/game.lua')
 Variant = dofile('data/lib/KenfiLib/variant.lua')
 Position = dofile('data/lib/KenfiLib/position.lua')
