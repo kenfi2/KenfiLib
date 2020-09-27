@@ -23,8 +23,8 @@ return setmetatable(
 	getMaxHealth = function(self) return getCreatureMaxHealth(self.id) end,
 	getStorageValue = function(self,key)
 		local value = getCreatureStorage(self.id, key)
-		if value:isTable() then
-			return totable(value)
+		if tostring(value):isTable() then
+			return value:totable()
 		end
 		return value
 	end,
