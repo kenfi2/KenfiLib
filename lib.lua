@@ -120,4 +120,4 @@ ItemType = dofile('data/lib/KenfiLib/itemtype.lua')
 Combat = dofile('data/lib/KenfiLib/combat.lua')
 Condition = dofile('data/lib/KenfiLib/condition.lua')
 MonsterType = dofile('data/lib/KenfiLib/monstertype.lua')
---PARTY ;(
+--PARTY ;( xddddd
